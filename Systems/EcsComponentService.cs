@@ -87,10 +87,10 @@ namespace uFrame.ECS
 
         public void AddComponent(int entityId, Type componentType)
         {
-            var entityManager = RegisterComponent<Entity>();
-            var entity = entityManager.Components.FirstOrDefault(p => p.EntityId == entityId);
-
-
+            //var entityManager = RegisterComponent<Entity>();
+            //var entity = entityManager.Components.FirstOrDefault(p => p.EntityId == entityId);
+            throw new Exception("Not Implemented use gameObject.AddComponent");
+             
         }
 
         public void AddComponent<TComponentType>(int entityId) where TComponentType : class,  IEcsComponent
