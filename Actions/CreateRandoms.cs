@@ -6,8 +6,18 @@ namespace uFrame.Actions
     [ActionLibrary, uFrameCategory("Random")]
     public static class CreateRandoms
     {
+        [ActionTitle("Random Inside Unit Sphere")]
+        public static Vector3 GetInsideSphere()
+        {
+            return Random.insideUnitSphere;
+        }
+        [ActionTitle("Random Inside Unit Sphere")]
+        public static Vector2 GetInsideCircle()
+        {
+            return Random.insideUnitCircle;
+        }
         [ActionTitle("Random Vector3")]
-        public static Vector3 RandomVector3(int minX, int maxX, int minY, int maxY, int minZ, int maxZ)
+        public static Vector3 RandomVector3(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
         {
             return new Vector3(
                 UnityEngine.Random.Range(minX, maxX),
@@ -16,7 +26,7 @@ namespace uFrame.Actions
                 );
         }
         [ActionTitle("Random Vector2")]
-        public static Vector2 RandomVector2(int minX, int maxX, int minY, int maxY)
+        public static Vector2 RandomVector2(float minX, float maxX, float minY, float maxY)
         {
             return new Vector2(
                 UnityEngine.Random.Range(minX, maxX),

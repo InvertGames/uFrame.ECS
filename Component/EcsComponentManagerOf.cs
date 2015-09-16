@@ -38,14 +38,15 @@ namespace uFrame.ECS
             }
         }
 
-        public virtual IEnumerable<TComponentType> Components
+        public virtual List<TComponentType> Components
         {
             get
             {
-                return _components.Values.SelectMany(p=>p);
+                return _componentList;
             }
         }
 
+        private readonly List<TComponentType> _componentList = new List<TComponentType>();
         public override Type For
         {
             get { return typeof (TComponentType); }
@@ -92,6 +93,7 @@ namespace uFrame.ECS
             {
                 return;
             }
+            _componentList.Add(component as TComponentType);
             _components[component.EntityId].Add((TComponentType)component);
             if (_CreatedObservable != null)
             {
@@ -105,6 +107,7 @@ namespace uFrame.ECS
             if (_components == null || !_components.ContainsKey(component.EntityId)) return;
             
             _components[component.EntityId].Remove((TComponentType)component);
+            _componentList.Remove(component as TComponentType);
             if (_components[component.EntityId].Count < 1)
             {
                 _components.Remove(component.EntityId);

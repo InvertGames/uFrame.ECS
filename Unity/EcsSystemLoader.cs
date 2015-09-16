@@ -54,13 +54,6 @@ namespace uFrame.ECS
         }
     }
 
-    public class DebugInfo
-    {
-        public string ActionId;
-        public object[] Variables;
-
-        public int Result { get; set; }
-    }
 
     public static class DebugService
     {
@@ -72,13 +65,14 @@ namespace uFrame.ECS
             get { return _debugInfo ?? (_debugInfo = new Subject<DebugInfo>()); }
         }
 
-        public static int NotifyDebug(string actionId, object[] variables)
+        public static int NotifyDebug(string previousActionId, string actionId, object[] variables)
         {
 #if UNITY_EDITOR
             if (_debugInfo != null)
             {
                 var debugInfo = new DebugInfo()
                 {
+                    PreviousId = previousActionId,
                     ActionId = actionId,
                     Variables = variables
                 };
@@ -93,10 +87,16 @@ namespace uFrame.ECS
 }
 public static class DebugExtensions
 {
+    public static int DebugInfo(this object obj,string previousId, string actionId, params object[] variables)
+    {
+
+        return DebugService.NotifyDebug(previousId, actionId, variables);
+
+    }
     public static int DebugInfo(this object obj, string actionId, params object[] variables)
     {
 
-        return DebugService.NotifyDebug(actionId, variables);
+        return DebugService.NotifyDebug(string.Empty, actionId, variables);
 
     }
 }

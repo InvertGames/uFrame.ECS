@@ -12,7 +12,7 @@ namespace uFrame.ECS
         {
             get
             {
-                return _entityId;
+                return _entityId == 0 ? (_entityId = EntityService.NewId()) : _entityId;
             }
             set { _entityId = value; }
         }
@@ -25,11 +25,6 @@ namespace uFrame.ECS
         public override void KernelLoading()
         {
             base.KernelLoading();
-            EntityService.NewId();
-            if (_entityId == 0)
-            {
-                _entityId = EntityService.NewId();
-            }
             EntityService.RegisterEntityView(this);
 
         }
