@@ -5,6 +5,9 @@ namespace uFrame.ECS
 {
     public partial class Entity : uFrameComponent, IEcsComponent
     {
+
+        public Entity ProxyFor;
+
         [SerializeField]
         private int _entityId;
 
@@ -12,6 +15,10 @@ namespace uFrame.ECS
         {
             get
             {
+                if (ProxyFor != null)
+                {
+                    return ProxyFor.EntityId;
+                }
                 return _entityId == 0 ? (_entityId = EntityService.NewId()) : _entityId;
             }
             set { _entityId = value; }
@@ -25,6 +32,7 @@ namespace uFrame.ECS
         public override void KernelLoading()
         {
             base.KernelLoading();
+            if (ProxyFor == null)
             EntityService.RegisterEntityView(this);
 
         }
@@ -32,6 +40,7 @@ namespace uFrame.ECS
         protected override void OnDestroy()
         {
             base.OnDestroy();
+            if (ProxyFor == null)
             EntityService.UnRegisterEntityView(this);
         }
     }
