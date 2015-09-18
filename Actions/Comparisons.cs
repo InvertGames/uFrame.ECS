@@ -168,12 +168,14 @@ namespace uFrame.Actions
         {
             var result = Input.GetKeyDown(key);
             if (result)
+            {
                 if (yes != null) yes();
-                else
-                {
-                    if (no != null)
-                        no();
-                }
+            }
+            else
+            {
+                if (no != null)
+                    no();
+            }
             return result;
         }
         [ActionTitle("Is Key")]
@@ -181,7 +183,11 @@ namespace uFrame.Actions
         {
             var result = Input.GetKey(key);
             if (result)
+            {
                 if (yes != null) yes();
+                
+            }
+               
                 else
                 {
                     if (no != null)
@@ -194,7 +200,10 @@ namespace uFrame.Actions
         {
             var result = Input.GetKeyUp(key);
             if (result)
+            {
                 if (yes != null) yes();
+            }
+                
                 else
                 {
                     if (no != null)

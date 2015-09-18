@@ -8,7 +8,9 @@ namespace uFrame.ECS
     {
         [uFrameEventMapping("Collider")]
         public int ColliderId { get; set; }
+
         public Collision CollisionData { get; set; }
+
         public void OnCollisionEnter(Collision coll)
         {
 

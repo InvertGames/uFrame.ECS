@@ -6,6 +6,7 @@ namespace uFrame.ECS
     [UFrameEventDispatcher("On Trigger Enter"), uFrameCategory("Unity Messages")]
     public class OnTriggerEnterDispatcher : EcsDispatcher
     {
+        [uFrameEventMapping("Collider")]
         public int ColliderId { get; set; }
         public Collider ColliderData { get; set; }
         public void OnTriggerEnter(Collider coll)
