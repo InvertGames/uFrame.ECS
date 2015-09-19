@@ -14,7 +14,11 @@ namespace uFrame.Actions
         public static void IsTrue(bool value, Action yes, Action no)
         {
             if (value)
+            {
                 if (yes != null) yes();
+
+            }
+                
                 else
                 {
                     if (no != null) no();
@@ -34,7 +38,11 @@ namespace uFrame.Actions
                 if (yes != null) yes();
                 return true;
             }
-            if (no != null) no();
+            else
+            {
+                if (no != null) no();
+            }
+          
             return false;
         }
 
@@ -46,7 +54,11 @@ namespace uFrame.Actions
                 if (yes != null) yes();
                 return true;
             }
-            if (no != null) no();
+            else
+            {
+                if (no != null) no();
+            }
+           
             return false;
         }
 
@@ -58,7 +70,11 @@ namespace uFrame.Actions
                 if (yes != null) yes();
                 return true;
             }
-            if (no != null) no();
+            else
+            {
+                if (no != null) no();
+            }
+            
             return false;
         }
 
@@ -70,7 +86,11 @@ namespace uFrame.Actions
                 if (yes != null) yes();
                 return true;
             }
-            if (no != null) no();
+            else
+            {
+                if (no != null) no();
+            }
+        
             return false;
         }
 

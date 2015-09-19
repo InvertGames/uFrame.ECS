@@ -42,9 +42,16 @@ namespace uFrame.ECS
                 entityComponent = gameObject.AddComponent<Entity>();
             Entity = entityComponent;
         }
+        private void OnApplicationQuit()
+        {
+            IsQuiting = true;
+        }
+
+        public bool IsQuiting { get; set; }
 
         public override void KernelLoaded()
         {
+            IsQuiting = false;
             base.KernelLoaded();
             if (EntityId != 0)
             {

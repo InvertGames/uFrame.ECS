@@ -12,7 +12,7 @@ namespace uFrame.ECS
         public void OnTriggerEnter(Collider coll)
         {
 
-            var colliderEntity = coll.gameObject.GetComponent<Entity>();
+            var colliderEntity = coll.GetComponent<Entity>();
             if (colliderEntity == null) return;
             ColliderId = colliderEntity.EntityId;
             EntityId = gameObject.GetComponent<Entity>().EntityId;

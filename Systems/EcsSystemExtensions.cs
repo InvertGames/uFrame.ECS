@@ -64,12 +64,22 @@ namespace uFrame.ECS
             return system.RegisterComponent<TComponentType>().RemovedObservable;
         }
 
-        public static void PropertyChanged<TComponentType, TPropertyType>(this IEcsSystem system, Func<TComponentType, IObservable<TPropertyType>> select, Action<TComponentType, TPropertyType> handler) where TComponentType : class, IEcsComponent
+        public static void PropertyChanged<TComponentType, TPropertyType>(this IEcsSystem system, 
+            Func<TComponentType, 
+            IObservable<TPropertyType>> select, 
+            Action<TComponentType, 
+            TPropertyType> handler, Func<TComponentType,TPropertyType> getImmediateValue = null ) where TComponentType : class, IEcsComponent
         {
             
             system.OnComponentCreated<TComponentType>().Subscribe(_ =>
             {
                 select(_).Subscribe(v=>handler(_,v)).DisposeWith(_).DisposeWith(system);
+                if (getImmediateValue != null)
+                {
+                    handler(_, getImmediateValue(_));
+
+                }
+                
             }).DisposeWith(system);
         }
     }

@@ -2,7 +2,7 @@ using uFrame.Attributes;
 
 namespace uFrame.Actions
 {
-    [ActionLibrary, uFrameCategory("Condition", "Floats")]
+    [ActionLibrary, uFrameCategory("Log", "Debug")]
     public static class DebugLibrary
     {
         [ActionTitle("Log Message")]
