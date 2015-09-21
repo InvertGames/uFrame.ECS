@@ -1,5 +1,6 @@
+using System;
 using uFrame.Attributes;
-
+using UnityEngine.UI;
 namespace uFrame.Actions
 {
     [ActionLibrary, uFrameCategory("uGUI")]
@@ -11,4 +12,22 @@ namespace uFrame.Actions
             
         }
     }
+
+    [uFrame.Attributes.ActionTitle("Set Text Label")]
+    public partial class SetNumericDisplayText : uFrame.Actions.UFAction
+    {
+
+        [In("Label")]
+        public Text Label;
+
+        [In("text")]
+        public String text;
+
+        public override void Execute()
+        {
+            base.Execute();
+            Label.text = text;
+        }
+    }
+
 }
