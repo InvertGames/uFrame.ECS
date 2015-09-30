@@ -64,7 +64,22 @@ namespace uFrame.ECS
         {
             get { return _debugInfo ?? (_debugInfo = new Subject<DebugInfo>()); }
         }
+        public static void NotifyDebug2(string previousActionId, string actionId, object[] variables)
+        {
+#if UNITY_EDITOR
+            if (_debugInfo != null)
+            {
+                var debugInfo = new DebugInfo()
+                {
+                    PreviousId = previousActionId,
+                    ActionId = actionId,
+                    Variables = variables
+                };
+                _debugInfo.OnNext(debugInfo);
 
+            }
+#endif
+        }
         public static int NotifyDebug(string previousActionId, string actionId, object[] variables)
         {
 #if UNITY_EDITOR
@@ -97,6 +112,12 @@ public static class DebugExtensions
     {
 
         return DebugService.NotifyDebug(string.Empty, actionId, variables);
+
+    }
+    public static void DebugInfo2(this object obj, string previousId, string actionId, params object[] variables)
+    {
+
+        DebugService.NotifyDebug(string.Empty, actionId, variables);
 
     }
 }

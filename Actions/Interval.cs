@@ -6,7 +6,7 @@ using UniRx;
 
 namespace uFrame.Actions
 {
-    [ActionTitle("Interval"), uFrameCategory("Timers")]
+    [ActionTitle("Interval"), uFrameCategory("Timers"), AsyncAction]
     public class Interval : UFAction
     {
         [In]
@@ -36,7 +36,7 @@ namespace uFrame.Actions
             }
         }
     }
-    [ActionTitle("Interval By Seconds"), uFrameCategory("Timers")]
+    [ActionTitle("Interval By Seconds"), uFrameCategory("Timers"), AsyncAction]
     public class IntervalBySeconds : UFAction
     {
 

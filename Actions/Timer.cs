@@ -5,7 +5,7 @@ using UniRx;
 
 namespace uFrame.Actions
 {
-    [ActionTitle("Timer"),uFrameCategory("Timers")]
+    [ActionTitle("Timer"),uFrameCategory("Timers"), AsyncAction]
     public class Timer : UFAction
     {
         [In] public int Minutes;
