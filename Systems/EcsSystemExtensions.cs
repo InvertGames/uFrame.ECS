@@ -68,18 +68,68 @@ namespace uFrame.ECS
             Func<TComponentType, 
             IObservable<TPropertyType>> select, 
             Action<TComponentType, 
-            TPropertyType> handler, Func<TComponentType,TPropertyType> getImmediateValue = null ) where TComponentType : class, IEcsComponent
+            TPropertyType> handler, Func<TComponentType,TPropertyType> getImmediateValue = null, bool onlyWhenChanged = false ) where TComponentType : class, IEcsComponent
         {
-            
+            if (onlyWhenChanged)
+            {
+                system.OnComponentCreated<TComponentType>().DistinctUntilChanged().Subscribe(_ =>
+                {
+                    select(_).Subscribe(v => handler(_, v)).DisposeWith(_).DisposeWith(system);
+                    if (getImmediateValue != null)
+                    {
+                        handler(_, getImmediateValue(_));
+
+                    }
+
+                }).DisposeWith(system);
+            }
+            else
+            {
+                system.OnComponentCreated<TComponentType>().Subscribe(_ =>
+                {
+                    select(_).Subscribe(v => handler(_, v)).DisposeWith(_).DisposeWith(system);
+                    if (getImmediateValue != null)
+                    {
+                        handler(_, getImmediateValue(_));
+
+                    }
+
+                }).DisposeWith(system);
+            }
+          
+        }
+       
+        public static void CollectionItemAdded<TComponentType, TPropertyType>(this IEcsSystem system,
+            Func<TComponentType,
+            ReactiveCollection<TPropertyType>> select,
+            Action<TComponentType,
+            TPropertyType> handler, bool immediate = false) where TComponentType : class, IEcsComponent
+        {
+
+                system.OnComponentCreated<TComponentType>().Subscribe(_ =>
+                {
+                    select(_).ObserveAdd().Subscribe(v => handler(_, v.Value)).DisposeWith(_).DisposeWith(system);
+
+                    if (immediate)
+                    {
+                        foreach (var item in select(_))
+                        {
+                            handler(_, item);
+                        }
+                    }
+
+                }).DisposeWith(system);
+        }
+
+        public static void CollectionItemRemoved<TComponentType, TPropertyType>(this IEcsSystem system,
+          Func<TComponentType,
+          ReactiveCollection<TPropertyType>> select,
+          Action<TComponentType,
+          TPropertyType> handler) where TComponentType : class, IEcsComponent
+        {
             system.OnComponentCreated<TComponentType>().Subscribe(_ =>
             {
-                select(_).Subscribe(v=>handler(_,v)).DisposeWith(_).DisposeWith(system);
-                if (getImmediateValue != null)
-                {
-                    handler(_, getImmediateValue(_));
-
-                }
-                
+                select(_).ObserveRemove().Subscribe(v => handler(_, v.Value)).DisposeWith(_).DisposeWith(system);
             }).DisposeWith(system);
         }
     }

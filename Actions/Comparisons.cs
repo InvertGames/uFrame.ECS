@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Globalization;
 using uFrame.Actions.Attributes;
 using uFrame.Attributes;
 using uFrame.ECS;
@@ -22,7 +23,7 @@ namespace uFrame.Actions
                 if (yes != null) yes();
 
             }
-                
+
                 else
                 {
                     if (no != null) no();
@@ -36,10 +37,10 @@ namespace uFrame.Actions
         {
             return a == b;
         }
-    
+
         [ActionTitle("Less Than")]
         [ActionDescription("Compare any two floats and continue execution with a certain branch")]
-        public static bool LessThan(float a, float b, 
+        public static bool LessThan(float a, float b,
             [Description("Invoked if a is less than b")] Action yes,
             [Description("Invoked if a is equal or greater than b")] Action no)
         {
@@ -52,7 +53,7 @@ namespace uFrame.Actions
             {
                 if (no != null) no();
             }
-          
+
             return false;
         }
 
@@ -71,7 +72,7 @@ namespace uFrame.Actions
             {
                 if (no != null) no();
             }
-           
+
             return false;
         }
 
@@ -90,7 +91,7 @@ namespace uFrame.Actions
             {
                 if (no != null) no();
             }
-            
+
             return false;
         }
 
@@ -109,7 +110,7 @@ namespace uFrame.Actions
             {
                 if (no != null) no();
             }
-        
+
             return false;
         }
 
@@ -148,7 +149,7 @@ namespace uFrame.Actions
     [ActionLibrary, uFrameCategory("Components")]
     public static class UnityLibrary
     {
-  
+
         [ActionTitle("Get Unity Component")]
         public static Type GetUnityComponent<Type>(GameObject go, MonoBehaviour component)
         {
@@ -187,13 +188,14 @@ namespace uFrame.Actions
             return Camera.main;
         }
     }
+
     [ActionLibrary, uFrameCategory("Loops")]
     public static class LoopsLibrary
     {
         [ActionTitle("Loop Collection")]
         public static void LoopCollection(
-            [Description("A list which you are going to iterate over.")]IList list, 
-            [Description("On each iteration, item will be set to the corresponding element from the list.")] out object item, 
+            [Description("A list which you are going to iterate over.")]IList list,
+            [Description("On each iteration, item will be set to the corresponding element from the list.")] out object item,
             [Description("Connect an action, which will be invoked on each iteration.")] Action next)
         {
             item = null;
@@ -201,9 +203,10 @@ namespace uFrame.Actions
             {
                 item = list[i];
                 next();
-            } 
+            }
         }
     }
+
 
     [ActionLibrary, uFrameCategory("Input")]
     public static class InputLibrary
@@ -230,9 +233,9 @@ namespace uFrame.Actions
             if (result)
             {
                 if (yes != null) yes();
-                
+
             }
-               
+
                 else
                 {
                     if (no != null)
@@ -248,7 +251,7 @@ namespace uFrame.Actions
             {
                 if (yes != null) yes();
             }
-                
+
                 else
                 {
                     if (no != null)
@@ -275,14 +278,14 @@ namespace uFrame.Actions
         public static void SetRigidbodyPosition(Rigidbody rigidBody, float x, float y, float z)
         {
             rigidBody.position = new Vector3(x, y, z);
-        }        
-        
+        }
+
         [ActionTitle("Set Rigidbody Position (Vector)")]
         public static void SetRigidbodyPosition(Rigidbody rigidBody, Vector3 vector)
         {
             rigidBody.position = vector;
         }
-         
+
         [ActionTitle("Set Rigidbody Rotation")]
         public static void SetRigidbodyRotation(Rigidbody rigidBody, float x, float y, float z)
         {
@@ -314,8 +317,46 @@ namespace uFrame.Actions
             return Time.fixedDeltaTime;
         }
     }
-    
 
+    [ActionLibrary, uFrameCategory("Convert")]
+    public static class Converter
+    {
+        [ActionTypeConverter()]
+        public static string ConvertToString(object obj)
+        {
+            return obj.ToString();
+        }
+        [ActionTypeConverter()]
+        public static int FloatToInt(float @in)
+        {
+            return (int) @in;
+        }
+        [ActionTypeConverter()]
+        public static float IntToFloat(int @in)
+        {
+            return @in;
+        }
+        [ActionTypeConverter()]
+        public static int StringToInt(string @in, NumberStyles style)
+        {
+            return int.Parse(@in,style);
+        }
+        [ActionTypeConverter()]
+        public static float StringToFloat(string @in, NumberStyles style)
+        {
+            return float.Parse(@in, style);
+        }
+        [ActionTypeConverter()]
+        public static DateTime StringToDateTime(string @in)
+        {
+            return DateTime.Parse(@in);
+        }
+        [ActionTypeConverter()]
+        public static bool StringToBool(string @in)
+        {
+            return bool.Parse(@in);
+        }
+    }
 
 }
 
