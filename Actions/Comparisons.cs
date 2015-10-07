@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Globalization;
 using uFrame.Actions.Attributes;
 using uFrame.Attributes;
 using uFrame.ECS;
@@ -165,20 +166,6 @@ namespace uFrame.Actions
             return Camera.main;
         }
     }
-    [ActionLibrary, uFrameCategory("Loops")]
-    public static class LoopsLibrary
-    {
-        [ActionTitle("Loop Collection")]
-        public static void LoopCollection(IList list, out object item, Action next)
-        {
-            item = null;
-            for (var i = 0; i < list.Count; i++)
-            {
-                item = list[i];
-                next();
-            } 
-        }
-    }
 
     [ActionLibrary, uFrameCategory("Input")]
     public static class InputLibrary
@@ -282,8 +269,46 @@ namespace uFrame.Actions
             return Time.fixedDeltaTime;
         }
     }
-    
 
+    [ActionLibrary, uFrameCategory("Convert")]
+    public static class Converter
+    {
+        [ActionTypeConverter()]
+        public static string ConvertToString(object obj)
+        {
+            return obj.ToString();
+        }
+        [ActionTypeConverter()]
+        public static int FloatToInt(float @in)
+        {
+            return (int) @in;
+        }
+        [ActionTypeConverter()]
+        public static float IntToFloat(int @in)
+        {
+            return @in;
+        }
+        [ActionTypeConverter()]
+        public static int StringToInt(string @in, NumberStyles style)
+        {
+            return int.Parse(@in,style);
+        }
+        [ActionTypeConverter()]
+        public static float StringToFloat(string @in, NumberStyles style)
+        {
+            return float.Parse(@in, style);
+        }
+        [ActionTypeConverter()]
+        public static DateTime StringToDateTime(string @in)
+        {
+            return DateTime.Parse(@in);
+        }
+        [ActionTypeConverter()]
+        public static bool StringToBool(string @in)
+        {
+            return bool.Parse(@in);
+        }
+    }
 
 }
 
