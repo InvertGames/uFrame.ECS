@@ -6,21 +6,21 @@ using UniRx;
 
 namespace uFrame.Actions
 {
-    [ActionTitle("Interval"), uFrameCategory("Timers"), AsyncAction]
+    [ActionTitle("Interval"), uFrameCategory("Timers"), AsyncAction, ActionDescription("Repeat something over time with an certain interval.")]
     public class Interval : UFAction
     {
-        [In]
+        [In, Description("How much to wait in minutes before next invocation. Will be added to Seconds.")]
         public int Minutes;
         [In]
         public int Seconds;
 
-        [In]
+        [In, Description("An component to use as a disposer for the timer.")]
         public IEcsComponent DisposeWith;
 
-        [Out]
+        [Out, Description("Connect to the next action. It will be invoked over time with a certain interval.")]
         public Action Tick;
 
-        [Out]
+        [Out, Description("An object to dispose, to stop the timer.")]
         public IDisposable Result;
 
         public override void Execute()
@@ -36,6 +36,7 @@ namespace uFrame.Actions
             }
         }
     }
+
     [ActionTitle("Interval By Seconds"), uFrameCategory("Timers"), AsyncAction]
     public class IntervalBySeconds : UFAction
     {
