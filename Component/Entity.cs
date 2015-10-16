@@ -1,4 +1,4 @@
-using uFrame.Kernel;
+﻿using uFrame.Kernel;
 using UnityEngine;
 
 namespace uFrame.ECS
@@ -23,7 +23,17 @@ namespace uFrame.ECS
             }
             set { _entityId = value; }
         }
-
+		/// <summary>
+        /// Is this component enabled
+        /// </summary>
+	    public bool Enabled
+	    {
+		    get
+		    {
+			    return this.enabled;
+		    }
+		    set { this.enabled = value; }
+	    }
         public int ComponentId
         {
             get { return 0; }

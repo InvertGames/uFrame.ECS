@@ -4,6 +4,9 @@ using UniRx;
 
 namespace uFrame.ECS
 {
+    /// <summary>
+    /// Manages components of a specific type
+    /// </summary>
     public interface IEcsComponentManager : IGroup
     {
         Type For { get; }

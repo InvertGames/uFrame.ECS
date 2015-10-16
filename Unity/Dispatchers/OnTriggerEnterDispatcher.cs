@@ -15,7 +15,7 @@ namespace uFrame.ECS
             var colliderEntity = coll.GetComponent<Entity>();
             if (colliderEntity == null) return;
             ColliderId = colliderEntity.EntityId;
-            EntityId = gameObject.GetComponent<Entity>().EntityId;
+            EntityId = Entity.EntityId;
             ColliderData = coll;
             Publish(this);
         }

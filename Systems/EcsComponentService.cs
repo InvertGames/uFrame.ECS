@@ -8,8 +8,23 @@ using UnityEngine;
 
 namespace uFrame.ECS
 {
+    /// <summary>
+    /// The main component service used to register and manage all components and groups.
+    /// </summary>
+    /// <code>
+    /// // If you are inside of a system you can access this via 
+    /// this.ComponentSystem
+    /// // If you are inside of a code handler, you can access it via 
+    /// System.ComponentSystem
+    /// //If you are anywhere else you can access via 
+    /// EcsComponentService.Instance
+    /// </code>
+
     public class EcsComponentService : EcsSystem, IComponentSystem
     {
+        /// <summary>
+        /// The singleton instance property, this can be accessed from anywhere.
+        /// </summary>
         public static EcsComponentService Instance { get; set; }
 
         public EcsComponentService()
@@ -52,6 +67,17 @@ namespace uFrame.ECS
             set { _componentManager = value; }
         }
 
+        /// <summary>
+        /// Registers a component type with the component system.
+        /// </summary>
+        /// <param name="componentType">The type of component to register</param>
+        /// <returns></returns>
+        /// <code>
+        /// var componentManager = System.ComponentSystem.RegisterComponent(typeof(PlayerComponent));
+        /// foreach (var item in componentManager) {
+        ///     Debug.Log(item.name);
+        /// }
+        /// </code>
         public IEcsComponentManager RegisterComponent(Type componentType)
         {
             IEcsComponentManager existing;
@@ -63,6 +89,16 @@ namespace uFrame.ECS
             return existing;
         }
 
+        /// <summary>
+        /// This method should be used to add any entity to the ecs component system
+        /// 
+        /// > You can use this if you want to register components that aren't derived from EcsComponent which requires MonoBehaviour, but you won't be able to see it in the unity inspector.
+        /// </summary>
+        /// <param name="componentType">The type of component to register.</param>
+        /// <param name="instance">The actual instance that is being registered</param>
+        /// <code>
+        /// System.ComponentSystem.RegisterComponent(typeof(CustomComponent), new CustomComponent());
+        /// </code>
         public void RegisterComponentInstance(Type componentType, IEcsComponent instance)
         {
             IEcsComponentManager existing;
@@ -74,6 +110,8 @@ namespace uFrame.ECS
             }
             existing.RegisterComponent(instance);
         }
+
+
         public void DestroyComponentInstance(Type componentType, IEcsComponent instance)
         {
             IEcsComponentManager existing;
@@ -98,6 +136,7 @@ namespace uFrame.ECS
 
         }
 
+
         public IEcsComponentManagerOf<TComponent> RegisterComponent<TComponent>() where TComponent : class, IEcsComponent
         {
             IEcsComponentManager existing;
@@ -113,6 +152,14 @@ namespace uFrame.ECS
             }
 
         }
+
+
+        /// <summary>
+        /// Registers a a reactive group with the list of managers.  If the group already exists it will return it, if not it will create a new one and return that.
+        /// </summary>
+        /// <typeparam name="TGroupType">The group type class. Usually derives from ReactiveGroup </typeparam>
+        /// <typeparam name="TComponent"></typeparam>
+        /// <returns>The instance of the group manager.</returns>
         public TGroupType RegisterGroup<TGroupType, TComponent>() where TComponent : GroupItem, new() where TGroupType : ReactiveGroup<TComponent>, new()
         {
             IEcsComponentManager existing;

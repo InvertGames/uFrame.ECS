@@ -28,5 +28,23 @@ namespace uFrame.Actions
         {
             timer.Dispose();
         }
+        [ActionTitle("Disable Component")]
+        public static void DisableComponent(MonoBehaviour behaviour) { behaviour.enabled = false; }
+
+        [ActionTitle("Enable Component")]
+        public static void EnableComponent(MonoBehaviour behaviour)
+        {
+            behaviour.enabled = true;
+        }
+
+        [ActionTitle("Remove Component By Type")]
+        public static void RemoveComponent(
+            GameObject gameObject,
+            [ActionTypeSelection(AssignableTo = typeof(IEcsComponent))] Type type
+            )
+        {
+            
+        }
+
     }
 }

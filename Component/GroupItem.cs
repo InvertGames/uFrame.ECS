@@ -1,13 +1,28 @@
-using System;
+﻿using System;
 using UniRx;
 
 namespace uFrame.ECS
 {
+    /// <summary>
+    /// The base class for all group items, for example ReactiveGroup`TGroupItem`
+    /// </summary>
     public class GroupItem : IEcsComponent
     {
         private Entity _entityView;
         private CompositeDisposable _disposer;
-
+        /// <summary>
+        /// Is this component enabled
+        /// </summary>
+	    public bool Enabled
+	    {
+		    get{return true;}
+		    set{
+		    	
+		    }
+	    }
+        /// <summary>
+        /// The entity id for the entity this group item belongs to
+        /// </summary>
         public int EntityId { get; set; }
 
         public int ComponentId
@@ -16,6 +31,9 @@ namespace uFrame.ECS
             set { throw new NotImplementedException(); }
         }
 
+        /// <summary>
+        /// The entity object that this groupitem belongs to
+        /// </summary>
         public Entity Entity
         {
             get { return _entityView ?? (_entityView = EntityService.GetEntityView(EntityId)); }

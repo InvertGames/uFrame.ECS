@@ -6,6 +6,7 @@ namespace uFrame.ECS
     {
         int EntityId { get; set; }
         int ComponentId { get; }
+        bool Enabled { get; set; }
     }
 
  
