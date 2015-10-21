@@ -6,6 +6,7 @@ namespace uFrame.ECS
     [UFrameEventDispatcher("On Collision Stay"), uFrameCategory("Unity Messages")]
     public class OnCollisionStayDispatcher : EcsDispatcher
     {
+        [uFrameEventMapping("Collider")]
         public int ColliderId { get; set; }
         public void OnCollisionStay(Collision coll)
         {

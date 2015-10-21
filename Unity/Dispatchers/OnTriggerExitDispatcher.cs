@@ -6,6 +6,7 @@ namespace uFrame.ECS
     [UFrameEventDispatcher("On Trigger Exit"), uFrameCategory("Unity Messages")]
     public class OnTriggerExitDispatcher : EcsDispatcher
     {
+        [uFrameEventMapping("Collider")]
         public int ColliderId { get; set; }
         public Collider ColliderData { get; set; }
         public void OnTriggerExit(Collider coll)
