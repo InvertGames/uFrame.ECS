@@ -11,6 +11,9 @@ namespace uFrame.ECS
     /// </summary>
     public static class EcsSystemExtensions
     {
+
+        
+
         //public static IEnumerable<IEcsComponent> MergeByEntity(this EcsSystem system, params IEcsComponentManager[] managers)
         //{
         //    var list = new HashSet<int>();

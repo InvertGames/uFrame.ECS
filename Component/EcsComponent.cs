@@ -10,6 +10,7 @@ namespace uFrame.ECS
     /// The base class for all ECS components, these components are nothing more than just data.  
     /// For the sake of Unity Compatability, it listens for a few Unity messages to make sure the ecs component system is always updated.
     /// </summary>
+    [RequireComponent(typeof(Entity))]
     public class EcsComponent : uFrameComponent, IEcsComponent, IDisposableContainer
     {
         //[SerializeField]

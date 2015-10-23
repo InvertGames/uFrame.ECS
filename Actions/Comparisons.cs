@@ -192,19 +192,19 @@ namespace uFrame.Actions
     [ActionLibrary, uFrameCategory("Loops")]
     public static class LoopsLibrary
     {
-        [ActionTitle("Loop Collection")]
-        public static void LoopCollection(
-            [Description("A list which you are going to iterate over.")]IList list,
-            [Description("On each iteration, item will be set to the corresponding element from the list.")] out object item,
-            [Description("Connect an action, which will be invoked on each iteration.")] Action next)
-        {
-            item = null;
-            for (var i = 0; i < list.Count; i++)
-            {
-                item = list[i];
-                next();
-            }
-        }
+        //[ActionTitle("Loop Collection")]
+        //public static void LoopCollection(
+        //    [Description("A list which you are going to iterate over.")]IList list,
+        //    [Description("On each iteration, item will be set to the corresponding element from the list.")] out object item,
+        //    [Description("Connect an action, which will be invoked on each iteration.")] Action next)
+        //{
+        //    item = null;
+        //    for (var i = 0; i < list.Count; i++)
+        //    {
+        //        item = list[i];
+        //        next();
+        //    }
+        //}
     }
 
 

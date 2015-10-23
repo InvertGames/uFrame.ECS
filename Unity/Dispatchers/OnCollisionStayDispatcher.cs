@@ -8,9 +8,9 @@ namespace uFrame.ECS
     {
         [uFrameEventMapping("Collider")]
         public int ColliderId { get; set; }
+
         public void OnCollisionStay(Collision coll)
         {
-
             var colliderEntity = coll.collider.gameObject.GetComponent<Entity>();
             if (colliderEntity == null) return;
             ColliderId = colliderEntity.EntityId;
