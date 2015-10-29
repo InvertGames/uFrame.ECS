@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using UniRx;
 
 namespace uFrame.ECS
 {
     public interface IComponentSystem : IEcsSystem
     {
+        IObservable<IEcsComponent> ComponentCreatedObservable { get; } 
+        IObservable<IEcsComponent> ComponentRemovedObservable { get; } 
+
         bool HasAny(int entityId, params Type[] type);
         bool TryGetComponent<TComponent>(int entityId, out TComponent component) where TComponent : class, IEcsComponent;
         bool TryGetComponent<TComponent>(int[] entityIds, out TComponent[] component) where TComponent : class, IEcsComponent;
