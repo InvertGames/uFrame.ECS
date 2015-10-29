@@ -11,6 +11,7 @@ namespace uFrame.ECS
     /// For the sake of Unity Compatability, it listens for a few Unity messages to make sure the ecs component system is always updated.
     /// </summary>
     [RequireComponent(typeof(Entity))]
+    [DisallowMultipleComponent]
     public class EcsComponent : uFrameComponent, IEcsComponent, IDisposableContainer
     {
         //[SerializeField]
@@ -36,10 +37,7 @@ namespace uFrame.ECS
 
         public virtual int ComponentId
         {
-            get
-            {
-                throw new Exception(string.Format("ComponentId is not implement on {0} component.  Make sure you override it and give it a unique integer.", this.GetType().Name));
-            }
+            get { return 0; }
         }
 
         /// <summary>

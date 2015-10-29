@@ -22,6 +22,18 @@ namespace uFrame.ECS
         public IComponentSystem ComponentSystem { get; set; }
 
         /// <summary>
+        /// The Ecs Event Aggregator, comes with additional features specific to ECS.
+        /// </summary>
+        public EcsEventAggregator EventSystem
+        {
+            get
+            {
+                return EventAggregator as EcsEventAggregator;
+                
+            }
+        }
+
+        /// <summary>
         /// The setup method is used to register groups/components, and setup event listeners using EventAggregator
         /// </summary>
         /// <code>

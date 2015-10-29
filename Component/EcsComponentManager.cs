@@ -1,12 +1,33 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using uFrame.Attributes;
 using UniRx;
 
 namespace uFrame.ECS
 {
     public abstract class EcsComponentManager : IEcsComponentManager
     {
-  
+        private int _componentId;
+        public int ComponentId
+        {
+            get
+            {
+                if (_componentId > 0)
+                    return _componentId;
+
+                var componentIdAttribute =
+                    For.GetCustomAttributes(typeof(ComponentId), true).FirstOrDefault() as
+                        ComponentId;
+                if (componentIdAttribute != null)
+                {
+                    return _componentId = componentIdAttribute.Identifier;
+                }
+                return _componentId;
+            }
+            set { _componentId = value; }
+        }
+
         public abstract Type For { get; }
         
 
@@ -22,7 +43,7 @@ namespace uFrame.ECS
             RemoveItem(item);
         }
 
-        public abstract IEnumerable<IEcsComponent> ForEntity(int entityId);
+        public abstract IEcsComponent ForEntity(int entityId);
 
 
         protected abstract void AddItem(IEcsComponent component);

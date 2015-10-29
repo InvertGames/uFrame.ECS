@@ -9,11 +9,12 @@ namespace uFrame.ECS
     /// </summary>
     public interface IEcsComponentManager : IGroup
     {
+        int ComponentId { get; set; }
         Type For { get; }
         IEnumerable<IEcsComponent> All { get; }
         void RegisterComponent(IEcsComponent item);
         void UnRegisterComponent(IEcsComponent item);
-        IEnumerable<IEcsComponent> ForEntity(int entityId);
+        IEcsComponent ForEntity(int entityId);
 
     }
 }

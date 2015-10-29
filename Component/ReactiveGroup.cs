@@ -19,7 +19,7 @@ namespace uFrame.ECS
         {
             if (_components.ContainsKey(entityId))
             {
-                return _components[entityId].FirstOrDefault();
+                return _components[entityId];
             }
             return null;
         }
@@ -51,7 +51,7 @@ namespace uFrame.ECS
             else
             {
                 if (_components.ContainsKey(entityId))
-                    this.RemoveItem(_components[entityId].FirstOrDefault());
+                    this.RemoveItem(_components[entityId]);
             }
         }
 

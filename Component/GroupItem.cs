@@ -25,7 +25,7 @@ namespace uFrame.ECS
         /// </summary>
         public int EntityId { get; set; }
 
-        public int ComponentId
+        public virtual int ComponentId
         {
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }

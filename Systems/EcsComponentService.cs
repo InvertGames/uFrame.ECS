@@ -58,6 +58,7 @@ namespace uFrame.ECS
         }
 
         private Dictionary<Type, IEcsComponentManager> _componentManager;
+        private Dictionary<int, IEcsComponentManager> _componentManagerById;
 
         public LinkedList<Component> Components { get; set; }
 
@@ -66,7 +67,11 @@ namespace uFrame.ECS
             get { return _componentManager ?? (_componentManager = new Dictionary<Type, IEcsComponentManager>()); }
             set { _componentManager = value; }
         }
-
+        public Dictionary<int, IEcsComponentManager> ComponentManagersById
+        {
+            get { return _componentManagerById ?? (_componentManagerById = new Dictionary<int, IEcsComponentManager>()); }
+            set { _componentManagerById = value; }
+        }
         /// <summary>
         /// Registers a component type with the component system.
         /// </summary>
@@ -107,6 +112,8 @@ namespace uFrame.ECS
                 var type = typeof(EcsComponentManagerOf<>).MakeGenericType(componentType);
                 existing = Activator.CreateInstance(type) as EcsComponentManager;
                 ComponentManagers.Add(componentType, existing);
+                if (instance.ComponentId > 0)
+                ComponentManagersById.Add(instance.ComponentId,existing);
             }
             existing.RegisterComponent(instance);
         }
@@ -136,14 +143,25 @@ namespace uFrame.ECS
 
         }
 
+        public bool TryGetManager(int componentId, out IEcsComponentManager manager)
+        {
+            return ComponentManagersById.TryGetValue(componentId, out manager);
+        }
 
-        public IEcsComponentManagerOf<TComponent> RegisterComponent<TComponent>() where TComponent : class, IEcsComponent
+        public IEcsComponentManagerOf<TComponent> RegisterComponent<TComponent>(int componentId = 0) where TComponent : class, IEcsComponent
         {
             IEcsComponentManager existing;
             if (!ComponentManagers.TryGetValue(typeof(TComponent), out existing))
             {
                 existing = new EcsComponentManagerOf<TComponent>();
+                existing.ComponentId = componentId;
                 ComponentManagers.Add(typeof(TComponent), existing);
+                if (componentId > 0)
+                    ComponentManagersById.Add(componentId, existing);
+                else
+                {
+                    // Throw warning here?
+                }
                 return (IEcsComponentManagerOf<TComponent>)existing;
             }
             else
@@ -157,22 +175,36 @@ namespace uFrame.ECS
         /// <summary>
         /// Registers a a reactive group with the list of managers.  If the group already exists it will return it, if not it will create a new one and return that.
         /// </summary>
+        /// <param name="componentId"></param>
         /// <typeparam name="TGroupType">The group type class. Usually derives from ReactiveGroup </typeparam>
         /// <typeparam name="TComponent"></typeparam>
         /// <returns>The instance of the group manager.</returns>
-        public TGroupType RegisterGroup<TGroupType, TComponent>() where TComponent : GroupItem, new() where TGroupType : ReactiveGroup<TComponent>, new()
+        public TGroupType RegisterGroup<TGroupType, TComponent>(int componentId = 0) where TComponent : GroupItem, new() where TGroupType : ReactiveGroup<TComponent>, new()
         {
             IEcsComponentManager existing;
             if (!ComponentManagers.TryGetValue(typeof(TComponent), out existing))
             {
                 existing = new TGroupType();
                 ComponentManagers.Add(typeof(TComponent), existing);
+                ComponentManagersById.Add(existing.ComponentId, existing);
                 return (TGroupType)existing;
             }
             else
             {
                 return (TGroupType)existing;
             }
+        }
+
+        public bool TryGetComponent(int entityId, int componentId, out IEcsComponent component)
+        {
+            IEcsComponentManager manager;
+            if (ComponentManagersById.TryGetValue(componentId, out manager))
+            {
+                component = manager.ForEntity(entityId);
+                return true;
+            }
+            component = null;
+            return false;
         }
 
         public bool TryGetComponent<TComponent>(int[] entityIds, out TComponent[] components) where TComponent : class, IEcsComponent
@@ -222,17 +254,6 @@ namespace uFrame.ECS
 
         }
 
-        public bool HasAny(int entityId, params Type[] types)
-        {
-            foreach (var type in types)
-            {
-                if (ComponentManagers[type].ForEntity(entityId).Any())
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
 
         public bool TryGetComponent<TComponent>(int entityId, out TComponent component) where TComponent : class, IEcsComponent
         {
