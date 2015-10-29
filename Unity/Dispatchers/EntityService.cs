@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using uFrame.Actions.Attributes;
+using uFrame.Attributes;
 using uFrame.Kernel;
 using UniRx;
 using UnityEngine;
@@ -107,4 +108,65 @@ namespace uFrame.ECS
         }
 
     }
+
+
+    public class PlayerDataService : EcsSystem
+    {
+
+        public override void Setup()
+        {
+            base.Setup();
+
+            this.OnEvent<SavePlayerData>()
+                .Subscribe(Save)
+                .DisposeWith(this);
+
+            this.OnEvent<LoadPlayerData>()
+                .Subscribe(Load)
+                .DisposeWith(this);
+
+            this.ComponentSystem.ComponentCreatedObservable
+                .Where(p=>p.EntityId > 0)
+                .Subscribe(LoadComponent)
+                .DisposeWith(this);
+
+        }
+
+
+
+
+        public virtual void Save(SavePlayerData data)
+        {
+            
+        }
+
+        public virtual void Load(LoadPlayerData data)
+        {
+
+        }
+
+        public virtual void LoadComponent(IEcsComponent ecsComponent)
+        {
+            
+        }
+
+        public virtual void SaveComponent(IEcsComponent ecsComponent)
+        {
+            
+        }
+
+    }
+
+    [uFrameEvent]
+    public class SavePlayerData
+    {
+        
+    }
+
+    [uFrameEvent]
+    public class LoadPlayerData
+    {
+
+    }
+
 }

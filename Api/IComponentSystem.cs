@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using UniRx;
 
 namespace uFrame.ECS
 {
     public interface IComponentSystem : IEcsSystem
     {
+  		IObservable<IEcsComponent> ComponentCreatedObservable { get; } 
+        IObservable<IEcsComponent> ComponentRemovedObservable { get; } 
         /// <summary>
         /// Gets a component manager for a specified component id.
         /// </summary>

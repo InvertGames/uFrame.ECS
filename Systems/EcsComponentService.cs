@@ -115,7 +115,12 @@ namespace uFrame.ECS
                 if (instance.ComponentId > 0)
                 ComponentManagersById.Add(instance.ComponentId,existing);
             }
+            if (_componentCreatedSubject != null)
+            {
+                _componentCreatedSubject.OnNext(instance);
+            }
             existing.RegisterComponent(instance);
+           
         }
 
 
@@ -126,8 +131,12 @@ namespace uFrame.ECS
             {
                 return;
             }
+            if (_componentRemovedSubject != null)
+            {
+                _componentRemovedSubject.OnNext(instance);
+            }
             existing.UnRegisterComponent(instance);
-
+          
         }
 
         public void AddComponent(int entityId, Type componentType)
@@ -254,6 +263,33 @@ namespace uFrame.ECS
 
         }
 
+        private Subject<IEcsComponent> _componentCreatedSubject; 
+        public IObservable<IEcsComponent> ComponentCreatedObservable
+        {
+            get
+            {
+                return _componentCreatedSubject ?? (_componentCreatedSubject = new Subject<IEcsComponent>());
+            }
+        }
+        private Subject<IEcsComponent> _componentRemovedSubject;
+        public IObservable<IEcsComponent> ComponentRemovedObservable
+        {
+            get
+            {
+                return _componentRemovedSubject ?? (_componentRemovedSubject = new Subject<IEcsComponent>());
+            }
+        }
+        public bool HasAny(int entityId, params Type[] types)
+        {
+            foreach (var type in types)
+            {
+                if (ComponentManagers[type].ForEntity(entityId).Any())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public bool TryGetComponent<TComponent>(int entityId, out TComponent component) where TComponent : class, IEcsComponent
         {
