@@ -42,7 +42,7 @@ namespace uFrame.ECS
         public override void Loaded()
         {
             base.Loaded();
-            var array = ComponentManagers.Where(p => typeof (GroupItem).IsAssignableFrom(p.Key)).ToArray();
+            var array = ComponentManagers.Where(p => p.Value is IReactiveGroup).ToArray();
             foreach (var item in array)
             {
                 var reactiveGroup = item.Value as IReactiveGroup;
@@ -188,14 +188,17 @@ namespace uFrame.ECS
         /// <typeparam name="TGroupType">The group type class. Usually derives from ReactiveGroup </typeparam>
         /// <typeparam name="TComponent"></typeparam>
         /// <returns>The instance of the group manager.</returns>
-        public TGroupType RegisterGroup<TGroupType, TComponent>(int componentId = 0) where TComponent : GroupItem, new() where TGroupType : ReactiveGroup<TComponent>, new()
+        public TGroupType RegisterGroup<TGroupType, TComponent>(int componentId = 0) 
+            where TComponent : IEcsComponent
+            where TGroupType : IReactiveGroup, new()
         {
             IEcsComponentManager existing;
             if (!ComponentManagers.TryGetValue(typeof(TComponent), out existing))
             {
                 existing = new TGroupType();
                 ComponentManagers.Add(typeof(TComponent), existing);
-                ComponentManagersById.Add(existing.ComponentId, existing);
+                if (existing.ComponentId > 0)
+                    ComponentManagersById.Add(existing.ComponentId, existing);
                 return (TGroupType)existing;
             }
             else
@@ -279,17 +282,7 @@ namespace uFrame.ECS
                 return _componentRemovedSubject ?? (_componentRemovedSubject = new Subject<IEcsComponent>());
             }
         }
-        public bool HasAny(int entityId, params Type[] types)
-        {
-            foreach (var type in types)
-            {
-                if (ComponentManagers[type].ForEntity(entityId).Any())
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+
 
         public bool TryGetComponent<TComponent>(int entityId, out TComponent component) where TComponent : class, IEcsComponent
         {

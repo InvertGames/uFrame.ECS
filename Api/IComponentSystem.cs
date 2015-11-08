@@ -36,9 +36,9 @@ namespace uFrame.ECS
         void AddComponent(int entityId, Type componentType);
         void AddComponent<TComponentType>(int entityId) where TComponentType : class, IEcsComponent;
 
-        TGroupType RegisterGroup<TGroupType, TComponent>(int componentId = 0) where TComponent : GroupItem, new()
-            where TGroupType : ReactiveGroup<TComponent>, new();
+        TGroupType RegisterGroup<TGroupType, TComponent>(int componentId = 0) where TComponent : IEcsComponent
+            where TGroupType : IReactiveGroup, new();
 
- 
+
     }
 }

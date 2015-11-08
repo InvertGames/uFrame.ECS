@@ -3,7 +3,7 @@ using UniRx;
 
 namespace uFrame.ECS
 {
-    public interface IReactiveGroup
+    public interface IReactiveGroup : IEcsComponentManager
     {
         /// <summary>
         /// This method is used to determine when to check that a group item is still valid. It should also initially store any component managers needed for matching.

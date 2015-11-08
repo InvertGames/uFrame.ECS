@@ -74,7 +74,14 @@ namespace uFrame.Actions
     [ActionLibrary, uFrameCategory("Int")]
     public static class IntLibrary
     {
-
+        public static int Increment(int a)
+        {
+            return a+1;
+        }
+        public static int Decrement(int a)
+        {
+            return a-1;
+        }
         public static int Multiply(int a, int b)
         {
             return a * b;

@@ -65,13 +65,13 @@ namespace uFrame.ECS
         public override void Setup()
         {
             base.Setup();
-            
+
             this.OnEvent<SpawnEntity>().Subscribe(_ => Spawn(_)).DisposeWith(this);
         }
 
         public override IEnumerator SetupAsync()
         {
-            
+
             return base.SetupAsync();
         }
 
@@ -98,7 +98,7 @@ namespace uFrame.ECS
             }
 
             if (prefab == null) return;
-            var result = Instantiate(prefab.Prefab.gameObject, spawnEntity.Position,Quaternion.Euler(spawnEntity.Rotation)) as GameObject;
+            var result = Instantiate(prefab.Prefab.gameObject, spawnEntity.Position, Quaternion.Euler(spawnEntity.Rotation)) as GameObject;
             if (result != null)
             {
                 spawnEntity.Result = result.GetComponent<Entity>();
@@ -110,63 +110,56 @@ namespace uFrame.ECS
     }
 
 
-    public class PlayerDataService : EcsSystem
+    public interface IComponentRepository
     {
+        /// <summary>
+        /// Initialize this repository precaching anything necessary.
+        /// </summary>
+        /// <param name="group"></param>
+        void Initialize(PlayerDataGroup group);
+        /// <summary>
+        /// This method is invoked when its time to deserialize a component
+        /// </summary>
+        /// <param name="ecsComponent"></param>
+        void LoadComponent(IPlayerDataComponent ecsComponent);
 
-        public override void Setup()
-        {
-            base.Setup();
-
-            this.OnEvent<SavePlayerData>()
-                .Subscribe(Save)
-                .DisposeWith(this);
-
-            this.OnEvent<LoadPlayerData>()
-                .Subscribe(Load)
-                .DisposeWith(this);
-
-            this.ComponentSystem.ComponentCreatedObservable
-                .Where(p=>p.EntityId > 0)
-                .Subscribe(LoadComponent)
-                .DisposeWith(this);
-
-        }
-
-
-
-
-        public virtual void Save(SavePlayerData data)
-        {
-            
-        }
-
-        public virtual void Load(LoadPlayerData data)
-        {
-
-        }
-
-        public virtual void LoadComponent(IEcsComponent ecsComponent)
-        {
-            
-        }
-
-        public virtual void SaveComponent(IEcsComponent ecsComponent)
-        {
-            
-        }
-
+        /// <summary>
+        /// This method is invoked when its time to serialize a component
+        /// </summary>
+        /// <param name="ecsComponent"></param>
+        void SaveComponent(IPlayerDataComponent ecsComponent);
     }
 
-    [uFrameEvent]
+    public abstract class ComponentRepositoryBehaviour : MonoBehaviour, IComponentRepository
+    {
+        public abstract void Initialize(PlayerDataGroup @group);
+        public abstract void LoadComponent(IPlayerDataComponent ecsComponent);
+        public abstract void SaveComponent(IPlayerDataComponent ecsComponent);
+    }
+
+    [uFrameEvent("Save Player Data")]
     public class SavePlayerData
+    {
+      
+    }
+
+    [uFrameEvent("Load Player Data")]
+    public class LoadPlayerData
     {
         
     }
 
-    [uFrameEvent]
-    public class LoadPlayerData
+    public interface IPlayerDataComponent : IEcsComponent
     {
 
+    }
+
+    public class PlayerDataGroup : DescriptorGroup<IPlayerDataComponent>
+    {
+        protected override void AddItem(IEcsComponent component)
+        {
+            base.AddItem(component);
+        }
     }
 
 }

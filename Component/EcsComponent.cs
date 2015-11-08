@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Invert.Json;
 using uFrame.Attributes;
 using uFrame.Kernel;
 using UniRx;
@@ -11,7 +15,6 @@ namespace uFrame.ECS
     /// For the sake of Unity Compatability, it listens for a few Unity messages to make sure the ecs component system is always updated.
     /// </summary>
     [RequireComponent(typeof(Entity))]
-    [DisallowMultipleComponent]
     public class EcsComponent : uFrameComponent, IEcsComponent, IDisposableContainer
     {
         //[SerializeField]
@@ -51,6 +54,8 @@ namespace uFrame.ECS
             }
             set { this.enabled = value; }
         }
+
+        public bool IsDirty { get; set; }
 
         public Entity _Entity;
         private Subject<Unit> _changed;
@@ -128,6 +133,7 @@ namespace uFrame.ECS
         {
             var previousValue = valueField;
             valueField = value;
+            IsDirty = true;
             if (observable != null)
             {
                 if (cachedEvent == null)
@@ -137,6 +143,7 @@ namespace uFrame.ECS
                 cachedEvent.CurrentValue = valueField;
                 observable.OnNext(cachedEvent);
             }
+      
         }
     }
 
@@ -145,6 +152,28 @@ namespace uFrame.ECS
         public TValue PreviousValue;
         public TValue CurrentValue;
     }
+
+
+
+    //public class PropertyDescriptor<T> : IPropertyDescriptor
+    //{
+    //    public string Name { get; set; }
+
+    //    public PropertyDescriptor(string name, Func<IObservable<T>> getObservable, Action<T> setValue, Func<T> getValue)
+    //    {
+    //        Name = name;
+    //        GetObservable = getObservable;
+    //        SetValue = setValue;
+    //        GetValue = getValue;
+    //    }
+
+    //    public Func<IObservable<T>> GetObservable { get; set; } 
+
+    //    public Action<T> SetValue { get; set; }
+
+    //    public Func<T> GetValue { get; set; }
+        
+    //}
 
     public class TestComponent : EcsComponent
     {
@@ -179,6 +208,118 @@ namespace uFrame.ECS
         private Vector3 _Offset;
 
         private PropertyChangedEvent<Vector3> _OffsetEvent;
+
+    
+
+    }
+
+    public static class EcsComponentExtensions
+    {
+        public static IEnumerable<PropertyInfo> GetDescriptorProperties<TAttribute>(this IEcsComponent component)
+        {
+
+            return
+                component.GetType()
+                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(p => p.IsDefined(typeof(TAttribute), true));
+        }
+        public static JSONClass SerializeComponent<TDescriptorAttribute>(this IEcsComponent component)
+        {
+            var node = new JSONClass();
+            foreach (var property in component.GetDescriptorProperties<TDescriptorAttribute>())
+            {
+
+                if (property.CanRead && property.CanWrite)
+                {
+                    if (property.PropertyType == typeof(int))
+                    {
+                        node.Add(property.Name, new JSONData((int)property.GetValue(component, null)));
+                        continue;
+                    }
+                    if (property.PropertyType == typeof(bool))
+                    {
+                        node.Add(property.Name, new JSONData((bool)property.GetValue(component, null)));
+                        continue;
+                    }
+                    if (property.PropertyType == typeof(float))
+                    {
+                        node.Add(property.Name, new JSONData((float)property.GetValue(component, null)));
+                        continue;
+                    }
+                    if (property.PropertyType == typeof(Vector3))
+                    {
+                        node.Add(property.Name, new JSONData((Vector3)property.GetValue(component, null)));
+                        continue;
+                    }
+                    if (property.PropertyType == typeof(Vector2))
+                    {
+                        node.Add(property.Name, new JSONData((Vector2)property.GetValue(component, null)));
+                        continue;
+                    }
+                    if (property.PropertyType == typeof(string))
+                    {
+                        node.Add(property.Name, new JSONData((string)property.GetValue(component, null)));
+                        continue;
+                    }
+                }
+            }
+            return node;
+        }
+
+        public static void DeserializeComponent<TDescriptorAttribute>(this IEcsComponent component, JSONNode node)
+        {
+            foreach (var property in component.GetDescriptorProperties<TDescriptorAttribute>())
+            {
+                if (property.CanRead && property.CanWrite)
+                {
+                    var propertyData = node[property.Name];
+                    if (property.PropertyType == typeof(int))
+                    {
+                        property.SetValue(component, propertyData.AsInt, null);
+                        continue;
+                    }
+                    if (propertyData == null) continue;
+                    if (property.PropertyType == typeof(bool))
+                    {
+                        property.SetValue(component, propertyData.AsBool, null);
+                        continue;
+                    }
+                    if (property.PropertyType == typeof(float))
+                    {
+                        property.SetValue(component, propertyData.AsFloat, null);
+                        continue;
+                    }
+                    if (property.PropertyType == typeof(Vector3))
+                    {
+                        property.SetValue(component, propertyData.AsVector3, null);
+                        continue;
+                    }
+                    if (property.PropertyType == typeof(Vector2))
+                    {
+                        property.SetValue(component, propertyData.AsVector2, null);
+                        continue;
+                    }
+                    if (property.PropertyType == typeof(string))
+                    {
+                        property.SetValue(component, propertyData.Value, null);
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+
+
+    public class PropertyDescriptor
+    {
+        //public PropertyInfo PropertyInfo { get; set; }
+
+        public Type PropertyType { get; set; }
+
+        public Func<IObservable<object>> GetObservable { get; set; }
+        
+        public Func<object> GetValue { get; set; }
+        public Action<object> SetValue { get; set; } 
     }
 
 }

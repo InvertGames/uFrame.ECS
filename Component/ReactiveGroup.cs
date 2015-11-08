@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using uFrame.Kernel;
 using UniRx;
 
 namespace uFrame.ECS
@@ -8,7 +10,7 @@ namespace uFrame.ECS
     /// Reactive Group is the base class of all group type components in ECS.
     /// </summary>
     /// <typeparam name="TContextItem"></typeparam>
-    public class ReactiveGroup<TContextItem> : EcsComponentManagerOf<TContextItem>, IReactiveGroup where TContextItem : GroupItem, new()
+    public class ReactiveGroup<TContextItem> : EcsComponentManagerOf<TContextItem>, IReactiveGroup where TContextItem : IEcsComponent
     {
         /// <summary>
         /// Does the given entity match this group filter, if so it will return the group item, otherwise, it will return null.
@@ -21,7 +23,7 @@ namespace uFrame.ECS
             {
                 return _components[entityId];
             }
-            return null;
+            return default(TContextItem);
         }
 
         /// <summary>
@@ -61,7 +63,56 @@ namespace uFrame.ECS
         /// <returns></returns>
         public virtual TContextItem Select()
         {
-            return new TContextItem();
+            return default(TContextItem);
+        }
+    }
+
+    /// <summary>
+    /// A Type group reactively keeps up with all components that have a specific base class, or interface implementation.
+    /// This can be useful for queries such as. GetAllINetworkable, GetAllSerializable
+    /// </summary>
+    /// <typeparam name="TInterface">The type at which to keep track of.</typeparam>
+    public class DescriptorGroup<TInterface> : EcsComponentManagerOf<TInterface>, IReactiveGroup where TInterface : IEcsComponent
+    {
+        public IEnumerable<IObservable<int>> Install(IComponentSystem ecsComponentService)
+        {
+            ecsComponentService.ComponentCreatedObservable.Where(p=>p is TInterface).Subscribe(OnNext);
+            ecsComponentService.ComponentRemovedObservable.Where(p=>p is TInterface).Subscribe(_=>RemoveItem(_));
+            yield break;
+        }
+
+        private void OnNext(IEcsComponent _)
+        {
+            AddItem(_);
+        }
+
+        public void UpdateItem(int entityId)
+        {
+            // No need for updating the item its simply based on a type
+        }
+    }
+
+    /// <summary>
+    /// A Type group reactively keeps up with all components that have a specific attribute defined on the component decleration.
+    /// </summary>
+    /// <typeparam name="TAttributeType">The type at which to keep track of.</typeparam>
+    public class AttributeGroup<TAttributeType> : EcsComponentManagerOf<IEcsComponent>, IReactiveGroup where TAttributeType : Attribute
+    {
+        public IEnumerable<IObservable<int>> Install(IComponentSystem ecsComponentService)
+        {
+            ecsComponentService.ComponentCreatedObservable.Where(p => p.GetType().IsDefined(typeof(TAttributeType),true)).Subscribe(OnNext).DisposeWith(ecsComponentService);
+            ecsComponentService.ComponentRemovedObservable.Where(p => p.GetType().IsDefined(typeof(TAttributeType), true)).Subscribe(_ => RemoveItem(_)).DisposeWith(ecsComponentService);
+            yield break;
+        }
+
+        private void OnNext(IEcsComponent _)
+        {
+            AddItem(_);
+        }
+
+        public void UpdateItem(int entityId)
+        {
+            // No need for updating the item its simply based on a type
         }
     }
 }

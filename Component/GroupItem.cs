@@ -20,6 +20,13 @@ namespace uFrame.ECS
 		    	
 		    }
 	    }
+
+        public bool IsDirty
+        {
+            get { return false; }
+            set { }
+        }
+
         /// <summary>
         /// The entity id for the entity this group item belongs to
         /// </summary>

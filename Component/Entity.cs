@@ -34,6 +34,16 @@ namespace uFrame.ECS
 		    }
 		    set { this.enabled = value; }
 	    }
+
+        public bool IsDirty
+        {
+            get { return false; }
+            set
+            {
+                
+            }
+        }
+
         public int ComponentId
         {
             get { return 0; }

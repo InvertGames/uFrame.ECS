@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace uFrame.ECS
 {
-    public class EcsComponentManagerOf<TComponentType> : EcsComponentManager, IEcsComponentManagerOf<TComponentType> where TComponentType : class,IEcsComponent
+    public class EcsComponentManagerOf<TComponentType> : EcsComponentManager, IEcsComponentManagerOf<TComponentType> where TComponentType : IEcsComponent
     {
         private readonly List<TComponentType> _componentList = new List<TComponentType>();
     
@@ -72,7 +72,7 @@ namespace uFrame.ECS
                 {
                     return _components[entityId];
                 }
-                return null;
+                return default(TComponentType);
             }
         }
 
@@ -105,7 +105,7 @@ namespace uFrame.ECS
             if (_components == null || !_components.ContainsKey(component.EntityId)) return;
             
             _components.Remove(component.EntityId);
-            _componentList.Remove(component as TComponentType);
+            _componentList.Remove((TComponentType) component);
 
             if (_RemovedObservable != null)
             {
