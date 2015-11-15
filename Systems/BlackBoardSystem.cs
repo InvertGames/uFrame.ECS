@@ -32,19 +32,22 @@ namespace uFrame.ECS
 
         public BlackBoardGroup BlackBoards { get; set; }
 
-        public TType Get<TType>() where TType : Component
+        public TType Get<TType>() where TType : class
         {
             return BlackBoards.Components.OfType<TType>().FirstOrDefault() ?? StartingBlackBoardComponents.OfType<TType>().FirstOrDefault();
         }
 
-        public TType EnsureBlackboard<TType>() where TType : Component
+        public TType EnsureBlackBoard<TType>() where TType : class, IEcsComponent
         {
             var result = Get<TType>();
             if (result != null)
             {
                 return result;
             }
-            return this.gameObject.AddComponent<TType>();
+
+            var component = EcsComponent.CreateObject(typeof (TType)) as TType;
+       
+            return component;
         }
     }
     public interface IBlackBoardComponent : IEcsComponent

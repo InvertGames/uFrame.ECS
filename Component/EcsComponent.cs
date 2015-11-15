@@ -31,6 +31,18 @@ namespace uFrame.ECS
         {
             get
             {
+                if (_entityId == 0)
+                {
+                    if (Entity != null)
+                    {
+                        _entityId = Entity.EntityId;
+                    }
+                    else 
+                    {
+                        _entityId = GetComponent<Entity>().EntityId;
+                    }
+                }
+
                 return _entityId;
             }
             set { 
@@ -87,14 +99,7 @@ namespace uFrame.ECS
                 EcsComponentService.Instance.RegisterComponentInstance(this.GetType(),this);
                 return;
             }
-            if (Entity != null)
-            {
-                _entityId = Entity.EntityId;
-            }
-            else if (_entityId == 0)
-            {
-                _entityId = GetComponent<Entity>().EntityId;
-            }
+          
             EcsComponentService.Instance.RegisterComponentInstance(this.GetType(), this);
         }
 
@@ -144,6 +149,28 @@ namespace uFrame.ECS
                 observable.OnNext(cachedEvent);
             }
       
+        }
+        /// <summary>
+        /// Creates a new gamobject entity with the component attached to it.
+        /// </summary>
+        /// <param name="componentType">The type of component to add to the game object/entity.</param>
+        /// <returns>The component created.</returns>
+        public static IEcsComponent CreateObject(Type componentType) 
+        {
+            var go = new GameObject(componentType.Name);
+            go.AddComponent<Entity>();
+            return go.AddComponent(componentType) as IEcsComponent;
+        }
+
+        /// <summary>
+        /// Creates a new gamobject entity with the component attached to it.
+        /// </summary>
+        /// <returns>The component created.</returns>
+        public static TComponentType CreateObject<TComponentType>() where TComponentType : Component
+        {
+            var go = new GameObject(typeof(TComponentType).Name);
+            go.AddComponent<Entity>();
+            return go.AddComponent<TComponentType>();
         }
     }
 
@@ -209,12 +236,6 @@ namespace uFrame.ECS
 
         private PropertyChangedEvent<Vector3> _OffsetEvent;
 
-        public static TComponentType CreateComponentObject<TComponentType>() where TComponentType : Component
-        {
-            var go = new GameObject();
-            go.AddComponent<Entity>();
-            return go.AddComponent<TComponentType>();
-        } 
 
     }
 

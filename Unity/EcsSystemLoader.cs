@@ -9,7 +9,7 @@ namespace uFrame.ECS
 {
     public class EcsSystemLoader : SystemLoader
     {
-        public List<EntityPrefabPool> Pools = new List<EntityPrefabPool>();
+   
         private ISystemUpdate[] _items;
         private ISystemFixedUpdate[] _itemsFixed;
 
@@ -18,7 +18,7 @@ namespace uFrame.ECS
             base.Load();
             Container.RegisterInstance<IBlackBoardSystem>(this.AddSystem<BlackBoardSystem>());
             Container.RegisterInstance<IComponentSystem>(this.AddSystem<EcsComponentService>());
-            this.AddSystem<EntityService>().Pools = Pools;
+
         }
 
         public void Update()
