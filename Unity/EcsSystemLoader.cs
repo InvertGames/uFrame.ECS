@@ -16,6 +16,7 @@ namespace uFrame.ECS
         public override void Load()
         {
             base.Load();
+            Container.RegisterInstance<IBlackBoardSystem>(this.AddSystem<BlackBoardSystem>());
             Container.RegisterInstance<IComponentSystem>(this.AddSystem<EcsComponentService>());
             this.AddSystem<EntityService>().Pools = Pools;
         }

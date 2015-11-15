@@ -209,13 +209,19 @@ namespace uFrame.ECS
 
         private PropertyChangedEvent<Vector3> _OffsetEvent;
 
-    
+        public static TComponentType CreateComponentObject<TComponentType>() where TComponentType : Component
+        {
+            var go = new GameObject();
+            go.AddComponent<Entity>();
+            return go.AddComponent<TComponentType>();
+        } 
 
     }
 
     public static class EcsComponentExtensions
     {
-        public static IEnumerable<PropertyInfo> GetDescriptorProperties<TAttribute>(this IEcsComponent component)
+       
+        public static IEnumerable<PropertyInfo> GetDescriptorProperties<TAttribute>(this object component)
         {
 
             return
@@ -223,7 +229,8 @@ namespace uFrame.ECS
                     .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                     .Where(p => p.IsDefined(typeof(TAttribute), true));
         }
-        public static JSONClass SerializeComponent<TDescriptorAttribute>(this IEcsComponent component)
+
+        public static JSONClass SerializeComponent<TDescriptorAttribute>(this object component)
         {
             var node = new JSONClass();
             foreach (var property in component.GetDescriptorProperties<TDescriptorAttribute>())
@@ -266,44 +273,49 @@ namespace uFrame.ECS
             return node;
         }
 
-        public static void DeserializeComponent<TDescriptorAttribute>(this IEcsComponent component, JSONNode node)
+        public static void DeserializeComponent<TDescriptorAttribute>(this object component, JSONNode node)
         {
             foreach (var property in component.GetDescriptorProperties<TDescriptorAttribute>())
             {
-                if (property.CanRead && property.CanWrite)
+                ApplyValue(component, node, property);
+            }
+        }
+
+        public static void ApplyValue(object component, JSONNode node, PropertyInfo property)
+        {
+            if (property.CanRead && property.CanWrite)
+            {
+                var propertyData = node[property.Name];
+                if (property.PropertyType == typeof (int))
                 {
-                    var propertyData = node[property.Name];
-                    if (property.PropertyType == typeof(int))
-                    {
-                        property.SetValue(component, propertyData.AsInt, null);
-                        continue;
-                    }
-                    if (propertyData == null) continue;
-                    if (property.PropertyType == typeof(bool))
-                    {
-                        property.SetValue(component, propertyData.AsBool, null);
-                        continue;
-                    }
-                    if (property.PropertyType == typeof(float))
-                    {
-                        property.SetValue(component, propertyData.AsFloat, null);
-                        continue;
-                    }
-                    if (property.PropertyType == typeof(Vector3))
-                    {
-                        property.SetValue(component, propertyData.AsVector3, null);
-                        continue;
-                    }
-                    if (property.PropertyType == typeof(Vector2))
-                    {
-                        property.SetValue(component, propertyData.AsVector2, null);
-                        continue;
-                    }
-                    if (property.PropertyType == typeof(string))
-                    {
-                        property.SetValue(component, propertyData.Value, null);
-                        continue;
-                    }
+                    property.SetValue(component, propertyData.AsInt, null);
+                    return;
+                }
+                if (propertyData == null) return;
+                if (property.PropertyType == typeof (bool))
+                {
+                    property.SetValue(component, propertyData.AsBool, null);
+                    return;
+                }
+                if (property.PropertyType == typeof (float))
+                {
+                    property.SetValue(component, propertyData.AsFloat, null);
+                    return;
+                }
+                if (property.PropertyType == typeof (Vector3))
+                {
+                    property.SetValue(component, propertyData.AsVector3, null);
+                    return;
+                }
+                if (property.PropertyType == typeof (Vector2))
+                {
+                    property.SetValue(component, propertyData.AsVector2, null);
+                    return;
+                }
+                if (property.PropertyType == typeof (string))
+                {
+                    property.SetValue(component, propertyData.Value, null);
+                    return;
                 }
             }
         }
