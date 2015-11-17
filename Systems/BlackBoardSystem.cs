@@ -14,8 +14,10 @@ namespace uFrame.ECS
     }
     public class BlackBoardSystem : EcsSystem, IBlackBoardSystem
     {
-        void Awake()
+
+        public override void KernelLoading()
         {
+            base.KernelLoading();
             // Make sure all the blackboard components are registered first.
             StartingBlackBoardComponents = uFrameKernel.Instance.gameObject.GetComponentsInChildren<IBlackBoardComponent>();
         }
@@ -26,8 +28,6 @@ namespace uFrame.ECS
         {
             base.Setup();
             BlackBoards = this.ComponentSystem.RegisterGroup<BlackBoardGroup, IBlackBoardComponent>();
-
-         
         }
 
         public BlackBoardGroup BlackBoards { get; set; }
