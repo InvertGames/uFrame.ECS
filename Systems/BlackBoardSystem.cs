@@ -34,20 +34,14 @@ namespace uFrame.ECS
 
         public TType Get<TType>() where TType : class
         {
-            return BlackBoards.Components.OfType<TType>().FirstOrDefault() ?? StartingBlackBoardComponents.OfType<TType>().FirstOrDefault();
+            var item = BlackBoards.Components.OfType<TType>().FirstOrDefault();
+                //?? StartingBlackBoardComponents.OfType<TType>().FirstOrDefault();
+            return item ?? EcsComponent.CreateObject(typeof(TType)) as TType;
         }
 
         public TType EnsureBlackBoard<TType>() where TType : class, IEcsComponent
         {
-            var result = Get<TType>();
-            if (result != null)
-            {
-                return result;
-            }
-
-            var component = EcsComponent.CreateObject(typeof (TType)) as TType;
-       
-            return component;
+            return Get<TType>();
         }
     }
     public interface IBlackBoardComponent : IEcsComponent
