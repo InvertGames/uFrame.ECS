@@ -165,12 +165,12 @@ namespace uFrame.ECS
                 existing = new EcsComponentManagerOf<TComponent>();
                 existing.ComponentId = componentId;
                 ComponentManagers.Add(typeof(TComponent), existing);
-                if (componentId > 0)
-                    ComponentManagersById.Add(componentId, existing);
-                else
-                {
-                    // Throw warning here?
-                }
+                //if (componentId > 0)
+                //    ComponentManagersById.Add(componentId, existing);
+                //else
+                //{
+                //    // Throw warning here?
+                //}
                 return (IEcsComponentManagerOf<TComponent>)existing;
             }
             else
