@@ -198,7 +198,17 @@ namespace uFrame.ECS
                 existing = new TGroupType();
                 ComponentManagers.Add(typeof(TComponent), existing);
                 if (existing.ComponentId > 0)
-                    ComponentManagersById.Add(existing.ComponentId, existing);
+                {
+                    try
+                    {
+                        ComponentManagersById.Add(existing.ComponentId, existing);
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        Debug.LogErrorFormat("Cannot register component {0} with ID {1}. Component with such Id is already registered: {2}.",typeof(TGroupType).Name,existing.ComponentId,
+                            ComponentManagersById[existing.ComponentId].For.Name);
+                    }
+                }
                 return (TGroupType)existing;
             }
             else
