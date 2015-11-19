@@ -14,6 +14,7 @@ namespace uFrame.ECS
 
     public interface IBlackBoardSystem
     {
+        bool Has<TType>() where TType : class;
         TType Get<TType>() where TType : class;
         TType EnsureBlackBoard<TType>() where TType : class, IEcsComponent;
     }

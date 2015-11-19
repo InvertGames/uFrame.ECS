@@ -32,6 +32,11 @@ namespace uFrame.ECS
 
         public BlackBoardGroup BlackBoards { get; set; }
 
+        public bool Has<TType>() where TType : class
+        {
+            return BlackBoards.Components.OfType<TType>().Any();
+        }
+
         public TType Get<TType>() where TType : class
         {
             var item = BlackBoards.Components.OfType<TType>().FirstOrDefault();
