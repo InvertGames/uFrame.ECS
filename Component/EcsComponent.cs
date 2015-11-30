@@ -302,6 +302,12 @@ namespace uFrame.ECS
             }
         }
 
+        public static T As<T>(this IEcsComponent component) where T : class, IEcsComponent 
+        {
+            IEcsComponentManager manager = EcsComponentService.Instance.RegisterComponent(typeof(T));
+            return (T) manager.ForEntity(component.EntityId);
+        }
+
         public static void ApplyValue(object component, JSONNode node, PropertyInfo property)
         {
             if (property.CanRead && property.CanWrite)
