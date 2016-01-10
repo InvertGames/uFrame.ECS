@@ -176,8 +176,15 @@ namespace uFrame.ECS
 
     public class PropertyChangedEvent<TValue>
     {
+        public EqualityComparer<TValue> Comparer
+        {
+            get { return _comparer ?? (_comparer = EqualityComparer<TValue>.Default); }
+            set { _comparer = value; }
+        }
+
         public TValue PreviousValue;
         public TValue CurrentValue;
+        private EqualityComparer<TValue> _comparer;
     }
 
 

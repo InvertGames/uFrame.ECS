@@ -155,7 +155,13 @@ namespace uFrame.ECS
             {
                 system.OnComponentCreated<TComponentType>().Subscribe(_ =>
                 {
-                    select(_).Where(p=>!Equals(p.PreviousValue, p.CurrentValue)).Subscribe(v => handler(_, v)).DisposeWith(_).DisposeWith(system);
+                    select(_).Subscribe(v =>
+                    {
+                        // the next line crashes unity:
+                        //!Equals(v.PreviousValue, v.CurrentValue))
+                        //That is why we got some nastiness here
+                        if (!v.Comparer.Equals(v.PreviousValue, v.CurrentValue)) handler(_, v);
+                    }).DisposeWith(_).DisposeWith(system);
                     if (getImmediateValue != null)
                     {
                         handler(_, new PropertyChangedEvent<TPropertyType>()
